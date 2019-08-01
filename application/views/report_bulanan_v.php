@@ -1,0 +1,104 @@
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4" id="main">
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Report Bulanan</h1>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= base_url();?>">Home</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url().'barang';?>">Report</a></li>
+            <li class="breadcrumb-item active">Bulanan</li>
+          </ol>
+        </nav>
+      </div>
+      <div id="loader" class="sr-only">
+        <i class="fa fa-spinner fa-spin"></i>
+      </div>
+      <div class="alert sr-only" id="alert">
+      </div>
+     
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label">Pilih Bulan</label>
+        <div class="col-sm-2">
+          <select name="bulan" id="bulan" class="form-control custom-select">
+            <?php for($i=1;$i<=12;$i++):?>
+            <option <?= $i == date('m') ? 'selected': '';?>><?= $i;?></option>
+          <?php endfor;?>
+          </select>
+        </div>
+        <label class="col-sm-2 col-form-label">Pilih Tahun</label>
+        <div class="col-sm-2">
+          <select name="tahun" id="tahun" class="form-control custom-select">
+            <?php for($i=date('Y');$i>=date('Y')-2;$i--):?>
+            <option><?= $i;?></option>
+          <?php endfor;?>
+          </select>
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-primary" id="go" type="submit">GO</button>
+          <button class="btn btn-success" id="pdf" type="submit">GET PDF</button>
+        </div>
+      </div>
+      
+
+      <div class="table-responsive">
+        <table class="table table-hover table-striped table-bordered"  id="table" style="font-family:'Times New Roman', Times, serif; font-size: 12px;width: 100%">
+          <thead class="bg-warning">
+            <tr>
+              <th class="text-center align-middle">No.</th>
+              <th class="text-center align-middle">Nama Barang</th>
+              <th class="text-center align-middle">Stok Awal</th>
+              <th class="text-center align-middle">Stok Masuk</th>
+              <th class="text-center align-middle">Stok Keluar</th>
+              <th class="text-center align-middle">Stok Akhir</th>
+            </tr>
+          </thead>
+          <tbody id="isi">
+          </tbody>
+        </table>
+      </div>
+    </main>
+  
+    <script>
+      $(document).ready(function() {
+      
+        $('#go').on('click', function(e){
+          $('#loader').removeClass('sr-only');
+          e.preventDefault();
+          $('#isi').html('');
+          let bulan = $('#bulan').val();
+          let tahun = $('#tahun').val();
+          $.ajax({
+            type: 'POST',
+            url: '<?= base_url()."Report/get_days_a_month";?>',
+            data: {bulan: bulan, tahun: tahun},
+            success: function(result){
+              $('#loader').addClass('sr-only');
+              let data = JSON.parse(result);
+              
+              let html = '';
+              let no = 0;
+              for( i = 0;i<data.length;i++){
+                no++
+                html += '<tr>'+
+                          '<td>'+no+'</td>'+
+                          '<td>'+data[i].nama_barang+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].stokawal)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].stokmasuk)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].stokkeluar)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].stokakhir)+'</td>'+
+                        '</tr>';
+                }
+              $('#isi').html(html);
+            }
+          })
+        })
+        $('#pdf').on('click', function(e){
+          let bulan = $('#bulan').val();
+          let tahun = $('#tahun').val();
+          
+          window.open("<?= base_url().'report/bulanan/pdf?bulan=';?>"+bulan+'&tahun='+tahun, '_blank');
+          
+        })
+      
+      })
+    </script>
