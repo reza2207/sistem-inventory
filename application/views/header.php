@@ -159,7 +159,7 @@
     <script src="<?= base_url().'assets/fontawesome-free-5.5.0-web/js/all.min.js';?>"></script>
     <script type="text/javascript" language="javascript" src="<?= base_url().'assets/datatables/Buttons-1.5.4/js/dataTables.buttons.js';?>"></script>
     <script src="<?= base_url().'assets/datatables/buttons.html5.min.js';?>"></script>
-    <script src="<?= base_url().'assets/js/test.js';?>"></script> -->
+    <script src="<?= base_url().'assets/js/test.js';?>"></script>
     <script src="<?= base_url().'assets/datatables/Buttons-1.5.4/js/buttons.colVis.min.js';?>"></script>
 
 

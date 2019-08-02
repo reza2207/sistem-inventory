@@ -208,6 +208,8 @@
         $('#search_no_faktur').on('keyup', function(e){
           e.preventDefault();
           let id = this.value;
+          $('#row-barang .row').remove();
+          $('#tmbh-item').attr('data-id', id);
           if(e.which == '13'){
             $.ajax({
               type: 'POST',
@@ -222,40 +224,7 @@
                   let html = '';
                   let no = 0;
                   
-                  $('#tmbh-item').on('click', function(e){
-                    no++;
-                    let id = $('#f_no_sj').val()
-                    e.preventDefault();
-                    html =   '<div class="row"><div class="col-sm-4">'+
-                                '<select type="text" id="select-brg'+no+'" class="form-control selectbarang" name="namabarang[]" style="width:100%">'+
-                                '<option value="">--pilih barang--</option></select>'+
-                              '</div>'+
-                              '<div class="col-sm-4">'+
-                                '<input type="number" class="form-control form-control-sm" id="qtyjml'+no+'" name="jumlah[]" placeholder="jumlah">'+
-                              '</div><div class="col-sm-4"><button id="" class="hapus-row">x</button></div></div>';
-
-                      $('#row-barang').append(html);
-                      let idsel = '#select-brg'+no;
-                      let idqty = '#qtyjml'+no;
-                      $(idsel).select2({
-                        data:datas
-                      }).on('select2:select', function (e) {
-                        let data = e.params.data;
-                        let ph = 'Maksimal jumlah: '+data.qty;
-                        $(idqty).attr({max:data.qty,min:0,placeholder:ph});                
-                        $(this).children('[value="'+data['id']+'"]').attr(
-                           {
-                            'data-qty':data["qty"], //
-                           }
-                        );
-                    }).val(0).trigger('change');
-                     
-                      $('.hapus-row').on('click', function(e){
-                        
-                        e.preventDefault()
-                        $(this).parent().parent().remove();
-                      })
-                  })
+                  
 
                 }else{
                   swal({
@@ -274,7 +243,52 @@
         })
         let no = 0;
         
+        $('#tmbh-item').on('click', function(e){
+          no++;
+          let id = $(this).attr('data-id' );
+          e.preventDefault();
+          $.ajax({
+            type: 'POST',
+            data: {id: id},
+            url: '<?= base_url()."retur/get_faktur";?>',
+            success: function(result){
+              let data = JSON.parse(result);
+              var datas = data.data;
+              if(data.type == 'success' && data.data != null){
 
+                html =   '<div class="row"><div class="col-sm-4">'+
+                            '<select type="text" id="select-brg'+no+'" class="form-control selectbarang" name="namabarang[]" style="width:100%">'+
+                            '<option value="">--pilih barang--</option></select>'+
+                          '</div>'+
+                          '<div class="col-sm-4">'+
+                            '<input type="number" class="form-control form-control-sm" id="qtyjml'+no+'" name="jumlah[]" placeholder="jumlah">'+
+                          '</div><div class="col-sm-4"><button id="" class="hapus-row">x</button></div></div>';
+
+                $('#row-barang').append(html);
+                let idsel = '#select-brg'+no;
+                let idqty = '#qtyjml'+no;
+                $(idsel).select2({
+                  data:datas
+                }).on('select2:select', function (e) {
+                  let data = e.params.data;
+                  let ph = 'Maksimal jumlah: '+data.qty;
+                  $(idqty).attr({max:data.qty,min:0,placeholder:ph});                
+                  $(this).children('[value="'+data['id']+'"]').attr(
+                     {
+                      'data-qty':data["qty"], //
+                     }
+                  );
+                }).val(0).trigger('change');
+               
+                $('.hapus-row').on('click', function(e){
+                  
+                  e.preventDefault()
+                  $(this).parent().parent().remove();
+                })
+              }
+            }
+          })
+        })
         $('#reload').on('click', function(){ //reload
           $('#table').DataTable().ajax.reload();
         })
