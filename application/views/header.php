@@ -155,7 +155,7 @@
     <!-- 
     <script src="<?= base_url().'assets/js/popper.min.js';?>"></script> -->
     <script src="<?= base_url().'assets/js/sweetalert2.min.js';?>"></script>
-    <script src="<?= base_url().'assets/Datejs-master/build/date.js';?>"></script>
+    
     <script src="<?= base_url().'assets/fontawesome-free-5.5.0-web/js/all.min.js';?>"></script>
     <script type="text/javascript" language="javascript" src="<?= base_url().'assets/datatables/Buttons-1.5.4/js/dataTables.buttons.js';?>"></script>
     <script src="<?= base_url().'assets/datatables/buttons.html5.min.js';?>"></script>

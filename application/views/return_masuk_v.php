@@ -254,6 +254,7 @@
             success: function(result){
               let data = JSON.parse(result);
               var datas = data.data;
+              console.log(no);
               if(data.type == 'success' && data.data != null){
 
                 html =   '<div class="row"><div class="col-sm-4">'+
