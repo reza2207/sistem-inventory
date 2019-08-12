@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 04, 2019 at 05:40 AM
+-- Generation Time: Aug 12, 2019 at 06:38 PM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.21
 
@@ -130,6 +130,7 @@ CREATE TABLE `tb_detail_barang_masuk` (
 
 CREATE TABLE `tb_detail_retur_barang_keluar` (
   `id_detail_retur_barang_keluar` varchar(50) NOT NULL,
+  `no_faktur` varchar(50) NOT NULL,
   `id_retur_barang_keluar` varchar(50) NOT NULL,
   `id_barang` varchar(50) NOT NULL,
   `qty` int(9) NOT NULL
@@ -143,6 +144,7 @@ CREATE TABLE `tb_detail_retur_barang_keluar` (
 
 CREATE TABLE `tb_detail_retur_barang_masuk` (
   `id_detail_retur_barang_masuk` varchar(50) NOT NULL,
+  `no_surat_jalan` varchar(50) NOT NULL,
   `id_retur_barang_masuk` varchar(50) NOT NULL,
   `id_barang` varchar(50) NOT NULL,
   `qty` int(9) NOT NULL
@@ -161,7 +163,8 @@ CREATE TABLE `tb_detail_stok_opname` (
   `stok_terakhir` int(10) NOT NULL,
   `stok_benar` int(9) NOT NULL,
   `jumlah_hilang` int(10) NOT NULL,
-  `jumlah_rusak` int(11) NOT NULL
+  `jumlah_rusak` int(11) NOT NULL,
+  `jumlah_retur` int(8) NOT NULL COMMENT 'jml retur masuk'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -297,7 +300,8 @@ ALTER TABLE `tb_detail_barang_masuk`
 --
 ALTER TABLE `tb_detail_retur_barang_keluar`
   ADD PRIMARY KEY (`id_detail_retur_barang_keluar`),
-  ADD KEY `id_retur_barang_masuk` (`id_retur_barang_keluar`);
+  ADD KEY `id_retur_barang_masuk` (`id_retur_barang_keluar`),
+  ADD KEY `no_faktur` (`no_faktur`);
 
 --
 -- Indexes for table `tb_detail_retur_barang_masuk`
