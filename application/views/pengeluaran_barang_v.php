@@ -60,14 +60,17 @@
               <div class="col-sm-3">
               Nama Barang
               </div>
+              <div class="col-sm-1">
+              Satuan
+              </div>
               <div class="col-sm-2">
-              Sisa Stock
+              Sisa
               </div>
               <div class="col-sm-2">
               Jumlah Keluar
               </div>
-              <div class="col-sm-2">
-              Harga Barang
+              <div class="col-sm-1">
+              Harga
               </div>
               <div class="col-sm-2">
               Total Harga
@@ -249,9 +252,12 @@
                       '<select type="text" class="form-control selectbarang" name="namabarang[]" style="width:100%" id="select-brg'+no+'" data-id="'+no+'">'+
                       '<option value="">--pilih barang--</option>'+
                       <?php foreach($barang AS $rowb):?>
-                      '<option value="<?= $rowb->id_barang;?>" data-id="<?= $rowb->stok_akhir;?>"><?= $rowb->nama_barang;?></option>'+
+                      '<option value="<?= $rowb->id_barang;?>" data-id="<?= $rowb->stok_akhir;?>" data-satuan="<?= $rowb->satuan;?>"><?= $rowb->nama_barang;?></option>'+
                       <?php endforeach ;?>
                       '</select>'+
+                      '</div>'+
+                      '<div class="col-sm-1">'+
+                      '<input type="text" class="form-control form-control-sm" name="satuan[]" placeholder="satuan" id="satuan'+no+'" readonly>'+
                       '</div>'+
                       '<div class="col-sm-2">'+
                       '<input class="form-control form-control-sm" id="sisa'+no+'" type="text" value="" readonly>'+
@@ -259,7 +265,7 @@
                       '<div class="col-sm-2">'+
                       '<input type="number" class="form-control form-control-sm jml" name="jumlah[]" data-id="'+no+'" id="jml'+no+'" placeholder="jumlah" min="1">'+
                       '</div>'+
-                      '<div class="col-sm-2">'+
+                      '<div class="col-sm-1">'+
                       '<input type="text" class="form-control form-control-sm hrg" name="harga[]" data-id="'+no+'" id="harga'+no+'" placeholder="harga" min="1">'+
                       '</div>'+
                       '<div class="col-sm-2">'+
@@ -272,6 +278,13 @@
           $(".selectbarang").select2({
             placeholder: 'Select an option',
           })
+           let idsatuan = '#satuan'+no;
+          $(".selectbarang").select2().on('select2:select', function (e) {
+            //let id = $(e.params.data.element).data('id');
+            let satuan = $(this).find(":selected").attr("data-satuan");
+            $(idsatuan).val(satuan) 
+          })
+
           /*$('.jml').on('keyup', function(e){
             let no = $(this).attr('data-id');
             let jml = this.value;

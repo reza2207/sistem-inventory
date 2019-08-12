@@ -124,13 +124,13 @@ class Barang_model extends CI_Model {
 	}
 
 	public function get_list(){
-		$this->db->select('id_barang, nama_barang');
+		$this->db->select('id_barang, nama_barang, satuan, nama_barang AS text');
 		$this->db->from($this->table);
 		$this->db->where('status', 'Active');
 		return $this->db->get()->result();
 	}
 	public function get_list_keluar(){
-		$this->db->select('tb_barang.id_barang, tb_barang.nama_barang, IFNULL(IFNULL(a.stok_akhir, "0")+b.qtyin-IFNULL(c.qtyout,"0")-IFNULL(d.qtyretur,"0"),"0") AS stok_akhir');
+		$this->db->select('tb_barang.id_barang, tb_barang.nama_barang, tb_barang.satuan, IFNULL(IFNULL(a.stok_akhir, "0")+b.qtyin-IFNULL(c.qtyout,"0")-IFNULL(d.qtyretur,"0"),"0") AS stok_akhir');
 		$this->db->from($this->table);
 		//get data stok opname last month
 		$this->db->join('(SELECT id_barang, stok_terakhir, jumlah_hilang, jumlah_rusak, (stok_benar-jumlah_hilang-jumlah_rusak) AS stok_akhir FROM tb_detail_stok_opname LEFT JOIN tb_stok_opname ON tb_detail_stok_opname.id_so = tb_stok_opname.id_so WHERE MONTH(tb_stok_opname.tgl_so) = MONTH(CURRENT_DATE)-1 AND YEAR(tb_stok_opname.tgl_so) = YEAR(CURRENT_DATE) ) AS a', 'tb_barang.id_barang = a.id_barang', 'LEFT');

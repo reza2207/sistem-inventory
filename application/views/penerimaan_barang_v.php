@@ -243,14 +243,17 @@
         $('#tmbh-item').on('click', function(e){
           e.preventDefault();
           html = '<div class="form-group row"><div class="col-sm-4">'+
-                      '<select type="text" class="form-control selectbarang" name="namabarang[]" style="width:100%">'+
+                      '<select type="text" class="form-control selectbarang" name="namabarang[]" id="select'+no+'" style="width:100%">'+
                       '<option value="">--pilih barang--</option>'+
                       <?php foreach($barang AS $rowb):?>
-                      '<option value="<?= $rowb->id_barang;?>"><?= $rowb->nama_barang;?></option>'+
+                      '<option value="<?= $rowb->id_barang;?>" data-satuan="<?= $rowb->satuan;?>"><?= $rowb->nama_barang;?></option>'+
                       <?php endforeach ;?>
                       '</select>'+
                       '</div>'+
-                      '<div class="col-sm-4">'+
+                      '<div class="col-sm-2">'+
+                      '<input type="text" class="form-control form-control-sm" name="satuan[]" placeholder="satuan" id="satuan'+no+'" readonly>'+
+                      '</div>'+
+                      '<div class="col-sm-2">'+
                       '<input type="text" class="form-control form-control-sm" name="jumlah[]" placeholder="jumlah">'+
                       '</div>'+
                       '<div class="col-sm-2">'+
@@ -258,16 +261,22 @@
                       '</div><button class="hapus-row">x</button></div>';
 
             $('#row-barang').append(html);
-            $(".selectbarang").select2({
+            let idsatuan = '#satuan'+no;
+             $(".selectbarang").select2({
               placeholder: 'Select an option',
             }) 
+            $(".selectbarang").select2().on('select2:select', function (e) {
+              //let id = $(e.params.data.element).data('id');
+              let satuan = $(this).find(":selected").attr("data-satuan");
+              $(idsatuan).val(satuan)
+            })
             $('.hapus-row').on('click', function(e){
           
           e.preventDefault()
           $(this).parent().remove();
+          })
         })
-        })
-
+        
         $('#reload').on('click', function(){ //reload
           $('#table').DataTable().ajax.reload();
         })
