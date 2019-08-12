@@ -239,11 +239,12 @@
         })
         
         let html = '';
-        let no = 1;
+        let no = 0;
         $('#tmbh-item').on('click', function(e){
           e.preventDefault();
+          no++;
           html = '<div class="form-group row"><div class="col-sm-4">'+
-                      '<select type="text" class="form-control selectbarang" name="namabarang[]" id="select'+no+'" style="width:100%">'+
+                      '<select type="text" class="form-control selectbarang" name="namabarang[]" data-id="'+no+'" id="select'+no+'" style="width:100%">'+
                       '<option value="">--pilih barang--</option>'+
                       <?php foreach($barang AS $rowb):?>
                       '<option value="<?= $rowb->id_barang;?>" data-satuan="<?= $rowb->satuan;?>"><?= $rowb->nama_barang;?></option>'+
@@ -261,14 +262,16 @@
                       '</div><button class="hapus-row">x</button></div>';
 
             $('#row-barang').append(html);
-            let idsatuan = '#satuan'+no;
              $(".selectbarang").select2({
               placeholder: 'Select an option',
             }) 
             $(".selectbarang").select2().on('select2:select', function (e) {
+              let id = $(this).attr('data-id');
+              let idsatuan = '#satuan'+id;
               //let id = $(e.params.data.element).data('id');
               let satuan = $(this).find(":selected").attr("data-satuan");
               $(idsatuan).val(satuan)
+              console.log(id)
             })
             $('.hapus-row').on('click', function(e){
           

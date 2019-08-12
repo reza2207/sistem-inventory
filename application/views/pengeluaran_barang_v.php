@@ -278,12 +278,8 @@
           $(".selectbarang").select2({
             placeholder: 'Select an option',
           })
-           let idsatuan = '#satuan'+no;
-          $(".selectbarang").select2().on('select2:select', function (e) {
-            //let id = $(e.params.data.element).data('id');
-            let satuan = $(this).find(":selected").attr("data-satuan");
-            $(idsatuan).val(satuan) 
-          })
+           
+
 
           /*$('.jml').on('keyup', function(e){
             let no = $(this).attr('data-id');
@@ -302,7 +298,7 @@
           })
           $('.selectbarang').on('change', function(e){
             let id = $(this).attr('data-id');
-            
+            let idsatuan = '#satuan'+id;
             let sisa = $("option:selected",this).attr('data-id');
             let idsisa = '#sisa'+id;
             let idjml = '#jml'+id;
@@ -310,11 +306,18 @@
             $(idjml).attr('max',sisa);
             
           })
+          $(".selectbarang").select2().on('select2:select', function (e) {
+            let no = $(this).attr('data-id');
+            let idsatuan = '#satuan'+no;
+            //let id = $(e.params.data.element).data('id');
+            let satuan = $(this).find(":selected").attr("data-satuan");
+            $(idsatuan).val(satuan)
+          })
           $('.hapus-row').on('click', function(e){
           
-          e.preventDefault()
-          $(this).parent().remove();
-        })
+            e.preventDefault()
+            $(this).parent().remove();
+          })
         })
 
         $('#reload').on('click', function(){ //reload
