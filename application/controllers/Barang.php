@@ -522,7 +522,7 @@ class Barang extends CI_Controller {
 			if($this->input->post(null)){
 				$id = $this->input->post('id');
 
-				echo json_encode($this->Barang_masuk_model->get_data_id($id)->row());
+				echo json_encode($this->Barang_masuk_model->get_data_id($id)->result());
 			}else{
 
 				show_404();
@@ -754,8 +754,8 @@ class Barang extends CI_Controller {
 				$this->form_validation->set_rules('id_customer', 'Nama Customer', 'required|trim|xss_clean');
 				$this->form_validation->set_rules('tgl_keluar', 'Tgl. Keluar', 'required|trim|xss_clean');
 				$this->form_validation->set_rules('namabarang[]', 'Nama Barang', 'required');
-				$this->form_validation->set_rules('jumlah[]', 'Jumlah', 'required|trim|xss_clean');
-				$this->form_validation->set_rules('harga[]', 'Harga', 'required|trim|xss_clean');
+				$this->form_validation->set_rules('jumlah[]', 'Jumlah', 'required|trim|xss_clean|numeric');
+				$this->form_validation->set_rules('harga[]', 'Harga', 'required|trim|xss_clean|numeric');
 				
 				if ($this->form_validation->run() == FALSE){ //if can't pass validation
 
@@ -816,7 +816,7 @@ class Barang extends CI_Controller {
 			if($this->input->post(null)){
 				$id = $this->input->post('id');
 
-				echo json_encode($this->Barang_keluar_model->get_data_id($id)->row());
+				echo json_encode($this->Barang_keluar_model->get_data_id($id)->result());
 			}else{
 
 				show_404();

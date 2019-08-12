@@ -115,6 +115,8 @@ class Stock_opname extends CI_Controller {
 		{
 				$month = (int) date('m');
 				$year = date('Y');
+				$lm = $month == 1 ? '12' : $month - 1;
+				$ly = $month == 1 ? $year - 1 : $year;
 
 				$pdf = new FPDF('P','mm','A4');
 		        // membuat halaman baru
@@ -134,9 +136,9 @@ class Stock_opname extends CI_Controller {
 		        $pdf->Cell(30,6,'Stok Terakhir',1,0,'C');
 		        $pdf->Cell(30,6,'Stok Sebenarnya',1,0,'C');
 		        $pdf->Cell(30,6,'Barang Rusak',1,0,'C');
-		        $pdf->Cell(30,6,'Selisih',1,1,'C');
+		        $pdf->Cell(30,6,'Jumlah Retur',1,1,'C');
 		        $pdf->SetFont('Arial','',10);
-		        $barang = $this->Barang_model->get_report($month, $year)->result();
+		        $barang = $this->Barang_model->get_report($month, $year, $lm, $ly)->result();
 		        $no = 0;
 		        foreach ($barang as $row){
 		        	$no++;
@@ -163,8 +165,8 @@ class Stock_opname extends CI_Controller {
 			if($this->input->post(null)){
 				$this->form_validation->set_rules('stok_benar[]', 'Stok Sebenarnya', 'numeric|trim');
 				$this->form_validation->set_rules('jml_rusak[]', 'Jumlah Rusak', 'numeric|trim');
-				$this->form_validation->set_rules('selisih', 'Stok Sebenarnya', 'numeric|trim');
-
+				$this->form_validation->set_rules('selisih[]', 'Stok Sebenarnya', 'numeric|trim');
+				$this->form_validation->set_rules('returtrue[]', 'Jumlah Retur', 'numeric|trim');
 				if ($this->form_validation->run() == FALSE){
 					$errors = validation_errors();
 		            $respons_ajax['type'] = 'error';
@@ -187,7 +189,8 @@ class Stock_opname extends CI_Controller {
 		      			"id_barang"  => $_POST['id_brg'][$i],
 		      			"stok_terakhir"  => $_POST['so_akhir'][$i],
 		      			"stok_benar"  => $_POST['stok_benar'][$i],
-		      			"jumlah_rusak"  => $_POST['jml_rusak'][$i]
+		      			"jumlah_rusak"  => $_POST['jml_rusak'][$i],
+		      			"jumlah_retur"=>$_POST['returtrue'][$i]
 		      			
 	     				);
 					}

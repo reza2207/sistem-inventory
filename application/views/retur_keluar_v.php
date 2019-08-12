@@ -271,8 +271,8 @@
                   data:datas
                 }).on('select2:select', function (e) {
                   let data = e.params.data;
-                  let ph = 'Maksimal jumlah: '+data.qty;
-                  $(idqty).attr({max:data.qty,min:0,placeholder:ph});                
+                  let ph = 'Maksimal jumlah: '+data.sisa;
+                  $(idqty).attr({max:data.sisa,min:0,placeholder:ph});                
                   $(this).children('[value="'+data['id']+'"]').attr(
                      {
                       'data-qty':data["qty"], //

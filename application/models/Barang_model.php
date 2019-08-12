@@ -169,12 +169,12 @@ class Barang_model extends CI_Model {
 		return $this->db->get();
 	}
 
-	public function get_report($month, $year)
+	/*public function get_report($month, $year)
 	{
-		$query = $this->db->query("SELECT tb_barang.id_barang, tb_barang.nama_barang, IFNULL(bbefore.qtyin - abefore.qtyout - returinbf.qtyin ,0) stokawal, IFNULL(b.qtyin,0) stokmasuk, IFNULL(a.qtyout,0) stokkeluar,IFNULL(b.qtyin-a.qtyout,0) stokakhir, IFNULL(bbefore.qtyin,0)qtyinold, IFNULL(abefore.qtyout,0) qtyoutold, IFNULL(returinbf.qtyin,0) rqtyinold, IFNULL(returoutbf.qtyout,0) rqtyoutold, IFNULL(returinnow.qtyin,0) rqtyinnow,IFNULL(returoutnow.qtyout,0) rqtyoutnow FROM tb_barang 
-LEFT JOIN 
-(SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE MONTH(tb_barang_keluar.tgl_faktur) = '$month' AND YEAR(tb_barang_keluar.tgl_faktur) = '$year' GROUP BY tb_detail_barang_keluar.id_barang) a ON tb_barang.id_barang = a.id_barang 
-LEFT JOIN
+		$query = $this->db->query("SELECT tb_barang.id_barang, tb_barang.nama_barang, IFNULL(bbefore.qtyin,0) - IFNULL(abefore.qtyout,0) - IFNULL(returinbf.qtyin ,0) stokawal, IFNULL(b.qtyin,0) + IFNULL(returoutbf.qtyout,0) stokmasuk, 
+			IFNULL(a.qtyout,0) stokkeluar, IFNULL(bbefore.qtyin,0) - IFNULL(abefore.qtyout,0) +
+			IFNULL(b.qtyin,0)-IFNULL(a.qtyout,0)-IFNULL(returinbf.qtyin,0)-IFNULL(returinnow.qtyin,0) stokakhir
+			, IFNULL(bbefore.qtyin,0)qtyinold, IFNULL(abefore.qtyout,0) qtyoutold, IFNULL(returinbf.qtyin,0) rqtyinold, IFNULL(returoutbf.qtyout,0) rqtyoutold, IFNULL(returinnow.qtyin,0) rqtyinnow,IFNULL(returoutnow.qtyout,0) rqtyoutnow, IFNULL(returoutbf.qtyout,0)+IFNULL(returoutnow.qtyout,0) returlast FROM tb_barang LEFT JOIN (SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE MONTH(tb_barang_keluar.tgl_faktur) = '$month' AND YEAR(tb_barang_keluar.tgl_faktur) = '$year' GROUP BY tb_detail_barang_keluar.id_barang) a ON tb_barang.id_barang = a.id_barang LEFT JOIN
 (SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE MONTH(tb_barang_masuk.tgl_po) = '$month' AND YEAR(tb_barang_masuk.tgl_po) = '$year' GROUP BY tb_detail_barang_masuk.id_barang) b ON tb_barang.id_barang = b.id_barang
 LEFT JOIN 
 (SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE MONTH(tb_barang_masuk.tgl_po) < '$month' AND YEAR(tb_barang_masuk.tgl_po) = '$year' GROUP BY tb_detail_barang_masuk.id_barang) AS bbefore ON tb_barang.id_barang = bbefore.id_barang
@@ -191,23 +191,43 @@ LEFT JOIN
 
 	WHERE tb_barang.status = 'Active'");
 		return $query;
+	}*/
+
+	//revisi
+	public function get_report($month, $year, $lm, $ly)
+	{
+		$query = $this->db->query("SELECT tb_barang.id_barang, tb_barang.nama_barang, IFNULL(bbefore.stok_benar,0) - IFNULL(returinbf.qtyin ,0) stokawal, IFNULL(b.qtyin,0) + IFNULL(returoutbf.qtyout,0) stokmasuk, IFNULL(a.qtyout,0) stokkeluar, IFNULL(bbefore.stok_benar,0) + IFNULL(b.qtyin,0)-IFNULL(a.qtyout,0)-IFNULL(returinbf.qtyin,0)-IFNULL(returinnow.qtyin,0) stokakhir, IFNULL(returinbf.qtyin,0) rqtyinold, IFNULL(returoutbf.qtyout,0) rqtyoutold, IFNULL(returinnow.qtyin,0) rqtyinnow,IFNULL(returoutnow.qtyout,0) rqtyoutnow, IFNULL(bbefore.jumlah_retur ,0)+IFNULL(returoutnow.qtyout,0) returlast FROM tb_barang LEFT JOIN (SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar 
+LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE MONTH(tb_barang_keluar.tgl_faktur) = '$month' AND YEAR(tb_barang_keluar.tgl_faktur) = '$year' AND tb_barang_keluar.status = 'Approve' GROUP BY tb_detail_barang_keluar.id_barang) a ON tb_barang.id_barang = a.id_barang LEFT JOIN
+(SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE MONTH(tb_barang_masuk.tgl_po) = '$month' AND YEAR(tb_barang_masuk.tgl_po) = '$year' AND tb_barang_masuk.status = 'Approve' GROUP BY tb_detail_barang_masuk.id_barang) b ON tb_barang.id_barang = b.id_barang
+LEFT JOIN 
+(SELECT tb_detail_stok_opname.id_barang, tb_detail_stok_opname.stok_benar, tb_detail_stok_opname.jumlah_retur FROM tb_detail_stok_opname LEFT JOIN tb_stok_opname ON tb_detail_stok_opname.id_so = tb_stok_opname.id_so WHERE MONTH(tb_stok_opname.tgl_so) = '$lm' AND YEAR(tb_stok_opname.tgl_so) = '$ly') AS bbefore ON tb_barang.id_barang = bbefore.id_barang
+LEFT JOIN
+
+(SELECT SUM(tb_detail_retur_barang_masuk.qty) AS qtyin, tb_detail_retur_barang_masuk.id_barang FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk WHERE MONTH(tb_retur_barang_masuk.tgl_retur) < '$month' AND YEAR(tb_retur_barang_masuk.tgl_retur) = '$ly' GROUP BY tb_detail_retur_barang_masuk.id_barang) AS returinbf ON tb_barang.id_barang = returinbf.id_barang 
+LEFT JOIN
+(SELECT SUM(tb_detail_retur_barang_keluar.qty) AS qtyout, tb_detail_retur_barang_keluar.id_barang FROM tb_detail_retur_barang_keluar LEFT JOIN tb_retur_barang_keluar ON tb_detail_retur_barang_keluar.id_retur_barang_keluar = tb_retur_barang_keluar.id_retur_barang_keluar WHERE MONTH(tb_retur_barang_keluar.tgl_retur) < '$month' AND YEAR(tb_retur_barang_keluar.tgl_retur) = '$ly' GROUP BY tb_detail_retur_barang_keluar.id_barang) AS returoutbf ON tb_barang.id_barang = returoutbf.id_barang
+LEFT JOIN
+(SELECT SUM(tb_detail_retur_barang_masuk.qty) AS qtyin, tb_detail_retur_barang_masuk.id_barang FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk WHERE MONTH(tb_retur_barang_masuk.tgl_retur) = '$month' AND YEAR(tb_retur_barang_masuk.tgl_retur) = '$year' GROUP BY tb_detail_retur_barang_masuk.id_barang) AS returinnow ON tb_barang.id_barang = returinnow.id_barang 
+LEFT JOIN
+(SELECT SUM(tb_detail_retur_barang_keluar.qty) AS qtyout, tb_detail_retur_barang_keluar.id_barang FROM tb_detail_retur_barang_keluar LEFT JOIN tb_retur_barang_keluar ON tb_detail_retur_barang_keluar.id_retur_barang_keluar = tb_retur_barang_keluar.id_retur_barang_keluar WHERE MONTH(tb_retur_barang_keluar.tgl_retur) = '$month' AND YEAR(tb_retur_barang_keluar.tgl_retur) = '$year' GROUP BY tb_detail_retur_barang_keluar.id_barang) AS returoutnow ON tb_barang.id_barang = returoutnow.id_barang
+
+	WHERE tb_barang.status = 'Active'");
+		return $query;
 	}
 
-	public function get_report_a_days($date)
+	public function get_report_a_days($date, $lm, $ly)
 	{
-		$query = $this->db->query("SELECT tb_barang.id_barang, tb_barang.nama_barang, IFNULL(bbefore.qtyin - abefore.qtyout - returinbf.qtyin ,0) stokawal, IFNULL(b.qtyin,0) stokmasuk, IFNULL(a.qtyout,0) stokkeluar,IFNULL(b.qtyin-a.qtyout,0) stokakhir, IFNULL(bbefore.qtyin,0)qtyinold, IFNULL(abefore.qtyout,0) qtyoutold, IFNULL(returinbf.qtyin,0) rqtyinold, IFNULL(returoutbf.qtyout,0) rqtyoutold, IFNULL(returinnow.qtyin,0) rqtyinnow,IFNULL(returoutnow.qtyout,0) rqtyoutnow FROM tb_barang 
+		$query = $this->db->query("SELECT tb_barang.id_barang, tb_barang.nama_barang, IFNULL(bbefore.stok_benar,0) stokawal, IFNULL(b.qtyin,0) stokmasuk, IFNULL(a.qtyout,0) stokkeluar,IFNULL(bbefore.stok_benar,0) + IFNULL(b.qtyin,0)- IFNULL(a.qtyout,0) stokakhir, IFNULL(returinbf.qtyin,0) rqtyinold, IFNULL(returoutbf.qtyout,0) rqtyoutold, IFNULL(returinnow.qtyin,0) rqtyinnow,IFNULL(returoutnow.qtyout,0) rqtyoutnow FROM tb_barang 
 LEFT JOIN 
-(SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE tb_barang_keluar.tgl_faktur = '$date' GROUP BY tb_detail_barang_keluar.id_barang) a ON tb_barang.id_barang = a.id_barang 
+(SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE tb_barang_keluar.tgl_faktur = '$date' AND tb_barang_keluar.status = 'Approve' GROUP BY tb_detail_barang_keluar.id_barang) a ON tb_barang.id_barang = a.id_barang 
 LEFT JOIN
-(SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE tb_barang_masuk.tgl_po = '$date' GROUP BY tb_detail_barang_masuk.id_barang) b ON tb_barang.id_barang = b.id_barang
+(SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE tb_barang_masuk.tgl_po = '$date'  AND tb_barang_masuk.status = 'Approve' GROUP BY tb_detail_barang_masuk.id_barang) b ON tb_barang.id_barang = b.id_barang
 LEFT JOIN 
-(SELECT SUM(tb_detail_barang_masuk.qty) AS qtyin, tb_detail_barang_masuk.id_barang FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk WHERE tb_barang_masuk.tgl_po < '$date'GROUP BY tb_detail_barang_masuk.id_barang) AS bbefore ON tb_barang.id_barang = bbefore.id_barang
+(SELECT tb_detail_stok_opname.id_barang, tb_detail_stok_opname.stok_benar, tb_detail_stok_opname.jumlah_retur FROM tb_detail_stok_opname LEFT JOIN tb_stok_opname ON tb_detail_stok_opname.id_so = tb_stok_opname.id_so WHERE MONTH(tb_stok_opname.tgl_so) = '$lm' AND YEAR(tb_stok_opname.tgl_so) = '$ly') AS bbefore ON tb_barang.id_barang = bbefore.id_barang
 LEFT JOIN
-(SELECT SUM(tb_detail_barang_keluar.qty) AS qtyout, tb_detail_barang_keluar.id_barang FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar WHERE tb_barang_keluar.tgl_faktur < '$date' GROUP BY tb_detail_barang_keluar.id_barang) abefore ON tb_barang.id_barang = abefore.id_barang 
+(SELECT SUM(tb_detail_retur_barang_masuk.qty) AS qtyin, tb_detail_retur_barang_masuk.id_barang FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk WHERE tb_retur_barang_masuk.tgl_retur < '$date' AND tb_retur_barang_masuk.status = 'Approve' GROUP BY tb_detail_retur_barang_masuk.id_barang) AS returinbf ON tb_barang.id_barang = returinbf.id_barang 
 LEFT JOIN
-(SELECT SUM(tb_detail_retur_barang_masuk.qty) AS qtyin, tb_detail_retur_barang_masuk.id_barang FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk WHERE tb_retur_barang_masuk.tgl_retur < '$date' GROUP BY tb_detail_retur_barang_masuk.id_barang) AS returinbf ON tb_barang.id_barang = returinbf.id_barang 
-LEFT JOIN
-(SELECT SUM(tb_detail_retur_barang_keluar.qty) AS qtyout, tb_detail_retur_barang_keluar.id_barang FROM tb_detail_retur_barang_keluar LEFT JOIN tb_retur_barang_keluar ON tb_detail_retur_barang_keluar.id_retur_barang_keluar = tb_retur_barang_keluar.id_retur_barang_keluar WHERE tb_retur_barang_keluar.tgl_retur < '$date' GROUP BY tb_detail_retur_barang_keluar.id_barang) AS returoutbf ON tb_barang.id_barang = returoutbf.id_barang
+(SELECT SUM(tb_detail_retur_barang_keluar.qty) AS qtyout, tb_detail_retur_barang_keluar.id_barang FROM tb_detail_retur_barang_keluar LEFT JOIN tb_retur_barang_keluar ON tb_detail_retur_barang_keluar.id_retur_barang_keluar = tb_retur_barang_keluar.id_retur_barang_keluar WHERE tb_retur_barang_keluar.tgl_retur < '$date' AND tb_retur_barang_keluar.status = 'Approve'  GROUP BY tb_detail_retur_barang_keluar.id_barang) AS returoutbf ON tb_barang.id_barang = returoutbf.id_barang
 LEFT JOIN
 (SELECT SUM(tb_detail_retur_barang_masuk.qty) AS qtyin, tb_detail_retur_barang_masuk.id_barang FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk WHERE tb_retur_barang_masuk.tgl_retur = '$date' GROUP BY tb_detail_retur_barang_masuk.id_barang) AS returinnow ON tb_barang.id_barang = returinnow.id_barang 
 LEFT JOIN

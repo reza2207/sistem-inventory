@@ -29,6 +29,8 @@
                 <th class="text-center align-middle">Stok Sebenarnya</th>
                 <th class="text-center align-middle">Jumlah Rusak</th>
                 <th class="text-center align-middle">Selisih</th>
+                <th class="text-center align-middle">Jumlah Retur Terakhir</th>
+                <th class="text-center align-middle">Jumlah Retur Sebenarnya</th>
               </tr>
             </thead>
            
@@ -36,7 +38,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="5">
+                  <td colspan="7">
                   </td>
                   <td class="text-right">
                     <button id="savecard" class="btn btn-primary" type="submit">Proses</button>
@@ -85,6 +87,7 @@
                         <th class="text-center align-middle">Stok Sebenarnya</th>
                         <th class="text-center align-middle">Jumlah Rusak</th>
                         <th class="text-center align-middle">Selisih</th>
+                        <th class="text-center align-middle">Jumlah Retur</th>
                       </tr>
                     </thead>
                     <tbody id="tbody-detail">
@@ -206,7 +209,9 @@
                           '<td class="text-right">'+bilangan(data[i].qtystok)+'</td>'+
                           '<td class="text-right">'+bilangan(data[i].qtybenar)+'</td>'+
                           '<td class="text-right">'+bilangan(data[i].jumlah_rusak)+'</td>'+
+                          
                           '<td class="text-right">'+bilangan(data[i].qtybenar-data[i].qtystok)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].jumlah_retur)+'</td>'+
                         '</tr>';
               }
               $('#tbody-detail').html(html);
@@ -234,7 +239,9 @@
                           '<td class="text-right">'+bilangan(data[i].stokakhir)+'</td>'+
                           '<td class="text-right"><input type="text" id="so'+no+'" hidden readonly value="'+data[i].stokakhir+'" name="so_akhir[]"><input type="text" hidden readonly value="'+data[i].id_barang+'" name="id_brg[]"><input type="text" class="benar" name="stok_benar[]" data-no="'+no+'" id="bnr'+no+'"></td>'+
                           '<td class="text-right"><input type="text" name="jml_rusak[]"></td>'+
-                          '<td class="text-right"><input type="text" id="sls'+no+'" name="selisih[]"></td>'+
+                          '<td class="text-right"><input type="text" id="sls'+no+'" name="selisih[]" readonly></td>'+
+                          '<td class="text-right">'+bilangan(data[i].returlast)+'</td>'+
+                           '<td class="text-right"><input type="text" id="retur'+no+'" name="returtrue[]" value=""></td>'+
                         '</tr>';
                 }
               

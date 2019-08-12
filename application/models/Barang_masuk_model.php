@@ -105,15 +105,25 @@ class Barang_masuk_model extends CI_Model {
 	}
 
 
-	public function get_data_id($id){
+	/*public function get_data_id($id){
 		$this->db->select("tb_barang_masuk.id_barang_masuk, tb_barang_masuk.id_supplier, tb_supplier.nama_supplier, tb_barang_masuk.tgl_surat_jalan, a.id_barang, a.qty, a.harga, a.jumlah,a.nama, a.jumlahtotal, tb_barang_masuk.tgl_po, tb_barang_masuk.no_po, tb_barang_masuk.no_surat_jalan, tb_barang_masuk.status, tb_barang_masuk.tgl_masuk");
 		$this->db->from("tb_barang_masuk");
 		$this->db->JOIN("(SELECT GROUP_CONCAT(id_detail_barang_masuk SEPARATOR '|') AS id_barang, GROUP_CONCAT(harga_satuan SEPARATOR '|') AS harga, GROUP_CONCAT(qty SEPARATOR '|') AS qty, id_barang_masuk, GROUP_CONCAT(qty*harga_satuan SEPARATOR '|') AS jumlah, GROUP_CONCAT(tb_barang.nama_barang SEPARATOR '|') AS nama, (SUM(qty*harga_satuan)) AS jumlahtotal FROM tb_detail_barang_masuk LEFT JOIN tb_barang ON tb_detail_barang_masuk.id_barang = tb_barang.id_barang GROUP BY id_barang_masuk) AS a", "tb_barang_masuk.id_barang_masuk = a.id_barang_masuk", "LEFT");
 		$this->db->JOIN("tb_supplier", "tb_barang_masuk.id_supplier = tb_supplier.id_supplier", "LEFT");
 		$this->db->where('tb_barang_masuk.id_barang_masuk', $id);
 		return $this->db->get();
-	}
+	}*/
 
+	public function get_data_id($id){
+		$this->db->select("tb_barang_masuk.id_supplier, tb_supplier.nama_supplier, tb_barang_masuk.tgl_surat_jalan, tb_barang_masuk.tgl_po, tb_barang_masuk.no_po, tb_barang_masuk.no_surat_jalan, tb_barang_masuk.status, tb_barang_masuk.tgl_masuk, tb_detail_barang_masuk.id_detail_barang_masuk, tb_detail_barang_masuk.id_barang, tb_detail_barang_masuk.harga_satuan AS harga, tb_detail_barang_masuk.qty, tb_detail_barang_masuk.id_barang_masuk, (tb_detail_barang_masuk.qty*tb_detail_barang_masuk.harga_satuan) AS jumlah, tb_barang.nama_barang AS nama, a.jumlahtotal");
+		$this->db->FROM('tb_detail_barang_masuk');
+		$this->db->JOIN('tb_barang', 'tb_detail_barang_masuk.id_barang = tb_barang.id_barang', 'LEFT');
+		$this->db->JOIN('tb_barang_masuk', 'tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk', 'LEFT');
+		$this->db->JOIN("tb_supplier", "tb_barang_masuk.id_supplier = tb_supplier.id_supplier", "LEFT");
+		$this->db->JOIN('(SELECT (SUM(qty*harga_satuan)) AS jumlahtotal, tb_detail_barang_masuk.id_barang_masuk FROM tb_detail_barang_masuk LEFT JOIN tb_barang_masuk ON tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk GROUP BY tb_barang_masuk.id_barang_masuk ) AS a', 'a.id_barang_masuk = tb_barang_masuk.id_barang_masuk', 'LEFT');
+		$this->db->where('tb_barang_masuk.id_barang_masuk', $id);
+		return $this->db->get();
+	}
 
 	public function get_barang($id)
 	{
@@ -136,11 +146,13 @@ class Barang_masuk_model extends CI_Model {
 
 	public function get_sj($id)
 	{
-		$this->db->select('tb_detail_barang_masuk.id_barang_masuk, tb_detail_barang_masuk.id_barang AS id, tb_detail_barang_masuk.qty,  tb_barang.nama_barang AS text');
+		$this->db->select('tb_detail_barang_masuk.id_barang_masuk, tb_detail_barang_masuk.id_barang AS id, tb_detail_barang_masuk.qty,  tb_barang.nama_barang AS text, IFNULL(b.qtyretur,0) qtyretur, tb_detail_barang_masuk.qty-IFNULL(b.qtyretur,0) sisa');
 		$this->db->from('tb_detail_barang_masuk');
 		$this->db->join('tb_barang_masuk', 'tb_detail_barang_masuk.id_barang_masuk = tb_barang_masuk.id_barang_masuk', 'left');
 		$this->db->join('tb_barang', 'tb_detail_barang_masuk.id_barang = tb_barang.id_barang', 'left');
+		$this->db->join('(SELECT SUM(tb_detail_retur_barang_masuk.qty) qtyretur, tb_detail_retur_barang_masuk.id_barang, tb_retur_barang_masuk.no_surat_jalan, CONCAT(tb_detail_retur_barang_masuk.no_surat_jalan,tb_detail_retur_barang_masuk.id_barang) id FROM tb_detail_retur_barang_masuk LEFT JOIN tb_retur_barang_masuk ON tb_detail_retur_barang_masuk.id_retur_barang_masuk = tb_retur_barang_masuk.id_retur_barang_masuk GROUP BY tb_retur_barang_masuk.no_surat_jalan ) AS b', 'CONCAT(tb_barang_masuk.no_surat_jalan,tb_detail_barang_masuk.id_barang) = b.id', 'LEFT');
 		$this->db->where('tb_barang_masuk.no_surat_jalan',$id);
+		$this->db->where('tb_detail_barang_masuk.qty-IFNULL(b.qtyretur,0) !=', 0);
 		return $this->db->get();
 	}
 

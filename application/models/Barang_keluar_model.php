@@ -97,14 +97,26 @@ class Barang_keluar_model extends CI_Model {
 		return $this->db->delete('tb_detail_barang_keluar', array('id_barang_keluar' => $id));
 
 	}
-	public function get_data_id($id){
+	/*public function get_data_id($id){
 		$this->db->select("tb_barang_keluar.id_barang_keluar, tb_barang_keluar.no_faktur, tb_barang_keluar.tgl_faktur, `tb_barang_keluar`.tgl_keluar, tb_customer.nama_customer, a.id_barang, a.qty, a.harga, a.jumlah,a.nama, a.jumlahtotal");
 		$this->db->from("tb_barang_keluar");
 		$this->db->JOIN("(SELECT GROUP_CONCAT(tb_detail_barang_keluar.id_barang SEPARATOR '|') AS id_barang, GROUP_CONCAT(harga_satuan SEPARATOR '|') AS harga, GROUP_CONCAT(qty SEPARATOR '|') AS qty, id_barang_keluar, GROUP_CONCAT(qty*harga_satuan SEPARATOR '|') AS jumlah, GROUP_CONCAT(tb_barang.nama_barang SEPARATOR '|') AS nama, (SUM(qty*harga_satuan)) AS jumlahtotal FROM tb_detail_barang_keluar LEFT JOIN tb_barang ON tb_detail_barang_keluar.id_barang = tb_barang.id_barang GROUP BY id_barang_keluar) AS a", "tb_barang_keluar.id_barang_keluar = a.id_barang_keluar", "LEFT");
 		$this->db->JOIN("tb_customer", "tb_barang_keluar.id_customer = tb_customer.id_customer", "LEFT");
 		$this->db->where('tb_barang_keluar.id_barang_keluar', $id);
 		return $this->db->get();
+	}*/
+
+	public function get_data_id($id){
+		$this->db->select("tb_barang_keluar.id_customer, tb_customer.nama_customer, tb_barang_keluar.tgl_faktur, tb_barang_keluar.no_faktur, tb_barang_keluar.status, tb_barang_keluar.tgl_keluar, tb_detail_barang_keluar.id_detail_barang_keluar, tb_detail_barang_keluar.id_barang, tb_detail_barang_keluar.harga_satuan AS harga, tb_detail_barang_keluar.qty, tb_detail_barang_keluar.id_barang_keluar, (tb_detail_barang_keluar.qty*tb_detail_barang_keluar.harga_satuan) AS jumlah, tb_barang.nama_barang AS nama, a.jumlahtotal");
+		$this->db->FROM('tb_detail_barang_keluar');
+		$this->db->JOIN('tb_barang', 'tb_detail_barang_keluar.id_barang = tb_barang.id_barang', 'LEFT');
+		$this->db->JOIN('tb_barang_keluar', 'tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar', 'LEFT');
+		$this->db->JOIN("tb_customer", "tb_barang_keluar.id_customer = tb_customer.id_customer", "LEFT");
+		$this->db->JOIN('(SELECT (SUM(qty*harga_satuan)) AS jumlahtotal, tb_detail_barang_keluar.id_barang_keluar FROM tb_detail_barang_keluar LEFT JOIN tb_barang_keluar ON tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar GROUP BY tb_barang_keluar.id_barang_keluar ) AS a', 'a.id_barang_keluar = tb_barang_keluar.id_barang_keluar', 'LEFT');
+		$this->db->where('tb_barang_keluar.id_barang_keluar', $id);
+		return $this->db->get();
 	}
+
 
 	public function get_barang($id)
 	{
@@ -135,11 +147,13 @@ class Barang_keluar_model extends CI_Model {
 
 	public function get_faktur($id)
 	{
-		$this->db->select('tb_detail_barang_keluar.id_barang_keluar, tb_detail_barang_keluar.id_barang AS id, tb_detail_barang_keluar.qty,  tb_barang.nama_barang AS text');
+		$this->db->select('tb_detail_barang_keluar.id_barang_keluar, tb_detail_barang_keluar.id_barang AS id, tb_detail_barang_keluar.qty,  tb_barang.nama_barang AS text, IFNULL(b.qtyretur,0) qtyretur, tb_detail_barang_keluar.qty-IFNULL(b.qtyretur,0) sisa');
 		$this->db->from('tb_detail_barang_keluar');
 		$this->db->join('tb_barang_keluar', 'tb_detail_barang_keluar.id_barang_keluar = tb_barang_keluar.id_barang_keluar', 'left');
 		$this->db->join('tb_barang', 'tb_detail_barang_keluar.id_barang = tb_barang.id_barang', 'left');
+		$this->db->join('(SELECT SUM(tb_detail_retur_barang_keluar.qty) qtyretur, tb_detail_retur_barang_keluar.id_barang, tb_retur_barang_keluar.no_faktur, CONCAT(tb_detail_retur_barang_keluar.no_faktur,tb_detail_retur_barang_keluar.id_barang) id FROM tb_detail_retur_barang_keluar LEFT JOIN tb_retur_barang_keluar ON tb_detail_retur_barang_keluar.id_retur_barang_keluar = tb_retur_barang_keluar.id_retur_barang_keluar GROUP BY tb_retur_barang_keluar.no_faktur ) AS b', 'CONCAT(tb_barang_keluar.no_faktur,tb_detail_barang_keluar.id_barang) = b.id', 'LEFT');
 		$this->db->where('tb_barang_keluar.no_faktur',$id);
+		$this->db->where('tb_detail_barang_keluar.qty-IFNULL(b.qtyretur,0) !=', 0);
 		return $this->db->get();
 	}
 

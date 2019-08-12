@@ -171,7 +171,8 @@ class Report extends CI_Controller {
 				if(isset($_GET['bulan']) && isset($_GET['tahun'])){
 					$month = $_GET['bulan'];
 					$year = $_GET['tahun'];
-
+					$lm = $month == 1 ? '12' : $month - 1;
+					$ly = $month == 1 ? $year - 1 : $year;
 					$pdf = new FPDF('P','mm','A4');
 			        // membuat halaman baru
 			        $pdf->AddPage();
@@ -192,7 +193,7 @@ class Report extends CI_Controller {
 			        $pdf->Cell(30,6,'Stok Keluar',1,0,'C');
 			        $pdf->Cell(30,6,'Stok Akhir',1,1,'C');
 			        $pdf->SetFont('Arial','',10);
-			        $barang = $this->Barang_model->get_report($month, $year)->result();
+			        $barang = $this->Barang_model->get_report($month, $year, $lm, $ly)->result();
 			        $no = 0;
 			        foreach ($barang as $row){
 			        	$no++;
@@ -231,7 +232,12 @@ class Report extends CI_Controller {
 			        $pdf->Cell(30,6,'Stok Keluar',1,0,'C');
 			        $pdf->Cell(30,6,'Stok Akhir',1,1,'C');
 			        $pdf->SetFont('Arial','',10);
-			        $barang = $this->Barang_model->get_report_a_days(tanggal1($tanggal))->result();
+			        $d = explode('-',tanggal1($tanggal));
+					$month = (int) $d[1];
+					$year = (int) $d[0];
+					$lm = $month == 1 ? '12' : $month - 1;
+					$ly = $month == 1 ? $year - 1 : $year;
+			        $barang = $this->Barang_model->get_report_a_days(tanggal1($tanggal), $lm, $ly)->result();
 			        $no = 0;
 			        foreach ($barang as $row){
 			        	$no++;
@@ -258,18 +264,24 @@ class Report extends CI_Controller {
 	
 	public function get_days_a_month()
 	{
+
+		//untuk mengambil data stok opname
 		if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) 
 		{
 			if($this->input->post(null)){
 				$month = $this->input->post('bulan');
 				$year = $this->input->post('tahun');
-
-				echo json_encode($this->Barang_model->get_report($month, $year)->result());
+				$lm = $month == 1 ? '12' : $month - 1;
+				
+				$ly = $month == 1 ? $year - 1 : $year;
+				echo json_encode($this->Barang_model->get_report($month, $year, $lm, $ly)->result());
 			}else{
 				$month = (int) date('m');
 				$year = date('Y');
+				$lm = $month == 1 ? '12' : $month - 1;
+				$ly = $month == 1 ? $year - 1 : $year;
 
-				echo json_encode($this->Barang_model->get_report($month, $year)->result());
+				echo json_encode($this->Barang_model->get_report($month, $year, $lm, $ly)->result());
 			}
 		}else{
 			show_404();
@@ -282,8 +294,12 @@ class Report extends CI_Controller {
 		{
 
 			$date = tanggal1($this->input->post('tanggal'));
-			
-			echo json_encode($this->Barang_model->get_report_a_days($date)->result());
+			$d = explode('-',$date);
+			$month = (int) $d[1];
+			$year = (int) $d[0];
+			$lm = $month == 1 ? '12' : $month - 1;
+			$ly = $month == 1 ? $year - 1 : $year;
+			echo json_encode($this->Barang_model->get_report_a_days($date, $lm, $ly)->result());
 		}else{
 			show_404();
 		}

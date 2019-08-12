@@ -138,7 +138,7 @@
                     <tfoot>
                       <tr>
                         <td colspan="4"></td>
-                        <td id="total"></td>
+                        <td id="total" class="text-right"></td>
                       </tr>
                     </tfoot>
                   </table>
@@ -257,7 +257,7 @@
                       '<input class="form-control form-control-sm" id="sisa'+no+'" type="text" value="" readonly>'+
                       '</div>'+
                       '<div class="col-sm-2">'+
-                      '<input type="text" class="form-control form-control-sm jml" name="jumlah[]" data-id="'+no+'" id="jml'+no+'" placeholder="jumlah" min="1">'+
+                      '<input type="number" class="form-control form-control-sm jml" name="jumlah[]" data-id="'+no+'" id="jml'+no+'" placeholder="jumlah" min="1">'+
                       '</div>'+
                       '<div class="col-sm-2">'+
                       '<input type="text" class="form-control form-control-sm hrg" name="harga[]" data-id="'+no+'" id="harga'+no+'" placeholder="harga" min="1">'+
@@ -272,6 +272,12 @@
           $(".selectbarang").select2({
             placeholder: 'Select an option',
           })
+          /*$('.jml').on('keyup', function(e){
+            let no = $(this).attr('data-id');
+            let jml = this.value;
+            let idsisa = '#sisa'+no;
+
+          })*/
           $(".hrg").on('keyup', function(e){
             let no = $(this).attr('data-id');
             let harga = $(this).val();
@@ -349,29 +355,29 @@
                   $('#btn-save-pdf').removeClass('sr-only')
                 }
               }
-              $('#d_faktur').text(data.no_faktur);
-              $('#d_tgl_faktur').text(tanggal(data.tgl_faktur));
-              $('#d_nama_customer').text(data.nama_customer);
-              $('#d_tgl_keluar').text(tanggal(data.tgl_keluar));
-              let idbarang = data.id_barang.split('|');
+              $('#d_faktur').text(data[0].no_faktur);
+              $('#d_tgl_faktur').text(tanggal(data[0].tgl_faktur));
+              $('#d_nama_customer').text(data[0].nama_customer);
+              $('#d_tgl_keluar').text(tanggal(data[0].tgl_keluar));
+              /*let idbarang = data.id_barang.split('|');
               let qtybarang = data.qty.split('|');
               let hargabarang = data.harga.split('|');
               let subjumlah = data.jumlah.split('|');
-              let namabarang = data.nama.split('|');
+              let namabarang = data.nama.split('|');*/
               let html = '';
               let no = 0;
-              for(i = 0;i < idbarang.length;i++){
+              for(i = 0;i < data.length;i++){
                 no++;
                 html += '<tr>'+
                           '<td>'+no+'</td>'+
-                          '<td>'+namabarang[i]+'</td>'+
-                          '<td>'+bilangan(qtybarang[i])+'</td>'+
-                          '<td>'+bilangan(hargabarang[i])+'</td>'+
-                          '<td>'+bilangan(subjumlah[i])+'</td>'+
+                          '<td>'+data[i].nama+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].qty)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].harga)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].jumlah)+'</td>'+
                         '</tr>';
               }
               $('#tbody-detail').html(html);
-              $('#total').text(bilangan(data.jumlahtotal))
+              $('#total').text(bilangan(data[0].jumlahtotal))
 
             }
           })

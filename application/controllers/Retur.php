@@ -176,6 +176,7 @@ class Retur extends CI_Controller {
 		      			"id_barang"  => $_POST['namabarang'][$i],
 		      			"qty"  => $_POST['jumlah'][$i],
 		      			"id_retur_barang_masuk" =>$id,
+		      			"no_surat_jalan"=>$nosj,
 		      			"id_detail_retur_barang_masuk" => $id.'-'.STR_PAD((int) $no, 3, "0", STR_PAD_LEFT)
 	     				);
 	    			}   
@@ -345,6 +346,7 @@ class Retur extends CI_Controller {
 		      			"id_barang"  => $_POST['namabarang'][$i],
 		      			"qty"  => $_POST['jumlah'][$i],
 		      			"id_retur_barang_keluar" =>$id,
+		      			"no_faktur"=>$nofaktur,
 		      			"id_detail_retur_barang_keluar" => $id.'-'.STR_PAD((int) $no, 3, "0", STR_PAD_LEFT)
 	     				);
 	    			}   

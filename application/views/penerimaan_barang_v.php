@@ -320,32 +320,32 @@
                   $('#btn-save-pdf').removeClass('sr-only')
                 }
               }
-              $('#d_tgl_sj').text(tanggal(data.tgl_surat_jalan));
-              $('#d_tgl_po').text(tanggal(data.tgl_po));
-              $('#d_no_sj').text(data.no_surat_jalan);
+              $('#d_tgl_sj').text(tanggal(data[0].tgl_surat_jalan));
+              $('#d_tgl_po').text(tanggal(data[0].tgl_po));
+              $('#d_no_sj').text(data[0].no_surat_jalan);
               
-              $('#d_no_po').text(data.no_po);
-              $('#d_nama_supplier').text(data.nama_supplier);
+              $('#d_no_po').text(data[0].no_po);
+              $('#d_nama_supplier').text(data[0].nama_supplier);
               
-              let idbarang = data.id_barang.split('|');
+             /* let idbarang = data.id_barang.split('|');
               let qtybarang = data.qty.split('|');
               let hargabarang = data.harga.split('|');
               let subjumlah = data.jumlah.split('|');
-              let namabarang = data.nama.split('|');
+              let namabarang = data.nama.split('|');*/
               let html = '';
               let no = 0;
-              for(i = 0;i < idbarang.length;i++){
+              for(i = 0;i < data.length;i++){
                 no++;
                 html += '<tr>'+
                           '<td class="text-center">'+no+'</td>'+
-                          '<td>'+namabarang[i]+'</td>'+
-                          '<td class="text-right">'+bilangan(qtybarang[i])+'</td>'+
-                          '<td class="text-right">'+bilangan(hargabarang[i])+'</td>'+
-                          '<td class="text-right">'+bilangan(subjumlah[i])+'</td>'+
+                          '<td>'+data[i].nama+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].qty)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].harga)+'</td>'+
+                          '<td class="text-right">'+bilangan(data[i].jumlah)+'</td>'+
                         '</tr>';
               }
               $('#tbody-detail').html(html);
-              $('#total').text(bilangan(data.jumlahtotal))
+              $('#total').text(bilangan(data[0].jumlahtotal))
               if(data.status == 'Pending'){
                 $('#btn-hapus').show();
                 $('#btn-hapus').attr('data-id',id);

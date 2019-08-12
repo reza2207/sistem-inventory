@@ -109,7 +109,7 @@ class So_model extends CI_Model {
 
 	public function get_data_id($id)
 	{
-		$this->db->select("tb_detail_stok_opname.id_barang, stok_terakhir AS qtystok, id_detail_so, tb_stok_opname.id_so, stok_benar AS qtybenar, tb_barang.nama_barang,jumlah_rusak, tb_stok_opname.tgl_so");
+		$this->db->select("tb_detail_stok_opname.id_barang, stok_terakhir AS qtystok, id_detail_so, tb_stok_opname.id_so, stok_benar AS qtybenar, tb_barang.nama_barang,jumlah_rusak, tb_stok_opname.tgl_so, tb_detail_stok_opname.jumlah_retur");
 		$this->db->from("tb_detail_stok_opname");
 		$this->db->join("tb_barang", "tb_detail_stok_opname.id_barang = tb_barang.id_barang", "LEFT");
 		$this->db->join("tb_stok_opname", "tb_detail_stok_opname.id_so = tb_stok_opname.id_so", "LEFT");
@@ -128,10 +128,7 @@ class So_model extends CI_Model {
 		$this->db->empty_table('tb_detail_stok_opname');
 	}
 
-	public function hapus_s()
-	{
-
-	}
+	
 
 
 	
