@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 01, 2019 at 01:46 PM
+-- Generation Time: Aug 04, 2019 at 05:40 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 5.6.21
 
@@ -229,6 +229,15 @@ CREATE TABLE `tb_user` (
   `fullname` varchar(200) NOT NULL,
   `peran` enum('admin','operator','kacab') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `tb_user`
+--
+
+INSERT INTO `tb_user` (`username`, `password`, `fullname`, `peran`) VALUES
+('admin', '$2y$10$ZfY/aM6ePzEdzXd3slfqv.373ar/wMbh.3uV6kZuaE0j2jBM3xiKO', 'Admin', 'admin'),
+('kacab', '$2y$10$egSI7BqaXRUPbZZs/wtp/OUz1.x0nLpgYzI2uhgztXgHxB6OxBDG.', 'Kacab', 'kacab'),
+('operator', '$2y$10$jE3Ul0r.mf8BYKm2a5D.nOJp2oK2.sL418FnNthrbL14PuyFjRVs6', 'Operator', 'operator');
 
 --
 -- Indexes for dumped tables
